@@ -1,0 +1,20 @@
+- type: python
+  script: path to project/script_python.py
+  hours: any
+  days: any
+  enabled: true
+  cleanup:
+    paths:
+      - /path to logs/or other/
+    rule:
+      keep_days: 14
+      extensions: [".log"]
+      recursive: true
+
+- type: bash
+  script: path to project/script_bash.sh
+  hours: any
+  days:
+    weekday: [0, 5]
+  enabled: true
+

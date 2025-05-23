@@ -1,0 +1,2 @@
+project1: /path/to/.venv-run/bin/python3
+project2: /path/to/.venv-mixo/bin/python3
