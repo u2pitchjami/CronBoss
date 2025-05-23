@@ -20,7 +20,7 @@ else:
 
 
 # 🐍 3. Environnement virtuel fixe
-venv_path = Path("/home/pipo/bin/.venv-run")
+venv_path = Path("/home/pipo/envs/vrun")
 
 # 🌐 4. Préparation de l'environnement
 env = os.environ.copy()
