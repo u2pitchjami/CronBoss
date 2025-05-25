@@ -13,6 +13,7 @@ logger = get_logger("Cron_Hub")
 def main():
     now = datetime.datetime.now()
     hour = now.hour
+    minute = now.minute
     weekday = now.weekday()
     day = now.day
 
@@ -24,14 +25,14 @@ def main():
         if task.get("enabled", True) is False:
             logger.info(f"⏸️ Tâche désactivée (enabled: false) : {task.get('script')}")
             continue
-        if should_run(task, hour, weekday, day):
+        if should_run(task, hour, minute, weekday, day):
             task_type = task.get("type")
             script = task.get("script")
             args = task.get("args", "")
-
+            
             if task_type == "python":
                 interpreter = task.get("interpreter") or get_interpreter_from_project(script, interpreters)
-                run_python_script(script, args)
+                run_python_script(script, args, interpreter)
             elif task_type == "bash":
                 run_bash_script(script, args)
             else:

@@ -34,7 +34,12 @@ def get_int(key: str, default: int = 0) -> int:
 
 SCRIPT_DIR = get_required("SCRIPT_DIR")
 ENV_PYTHON = get_required("ENV_PYTHON")
+INTERPRETERS_PATH = get_required("INTERPRETERS_PATH")
 
 #LOGS
 LOG_FILE_PATH = get_required("LOG_FILE_PATH")
 LOG_ROTATION_DAYS = get_int("LOG_ROTATION_DAYS", 100)
+
+CRON_INTERVAL_MINUTES = get_int("CRON_INTERVAL_MINUTES", 0)
+
+PROJECT_ROOT_FOLDERS = ["dev", "bin"]

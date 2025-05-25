@@ -10,9 +10,11 @@ from utils.config import SCRIPT_DIR
 
 logger = get_logger("Cron_Hub")
 
-
 def run_python_script(script_path, args="", interpreter=None):
     try:
+        if interpreter is None:
+            logger.warning(f"🚨 Impossible de détecter le projet pour ce script → risque d’interpréteur incorrect")
+            
         full_path = os.path.join(SCRIPT_DIR, script_path)
         cwd = Path(full_path).parent
         
