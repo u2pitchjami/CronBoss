@@ -24,8 +24,8 @@ def detect_project_name(script_path: str) -> Optional[str]:
                 return parts[idx + 1]
     return None
 
-def get_interpreter_from_project(script_path: str, interpreters_map: dict) -> str:
-    project = detect_project_name(script_path)
+def get_interpreter_from_project(script_path: str, source_file, interpreters_map: dict) -> str:
+    project = source_file
     return interpreters_map.get(project)
 
 def check_missing_interpreters(tasks_dir: Path, interpreters: dict):

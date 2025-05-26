@@ -22,21 +22,23 @@ def main():
     tasks = load_tasks_from_directory("tasks")
 
     for task in tasks:
-        if task.get("enabled", True) is False:
-            logger.info(f"⏸️ Tâche désactivée (enabled: false) : {task.get('script')}")
-            continue
         if should_run(task, hour, minute, weekday, day):
             task_type = task.get("type")
+            source_file = task.get("source_file")
             script = task.get("script")
             args = task.get("args", "")
-            
-            if task_type == "python":
-                interpreter = task.get("interpreter") or get_interpreter_from_project(script, interpreters)
-                run_python_script(script, args, interpreter)
-            elif task_type == "bash":
-                run_bash_script(script, args)
+            if task.get("enabled", True) is False:
+                logger.info(f"⏸️ Tâche désactivée (enabled: false) : {task.get('script')}")
+                continue
             else:
-                logger.warning(f"❓ Type inconnu : {task_type} pour {script}")
+                logger.info(f"⏸️ Tâche : {task.get('script')}")
+                if task_type == "python":
+                    interpreter = task.get("interpreter") or get_interpreter_from_project(script, source_file, interpreters)
+                    run_python_script(script, args, interpreter)
+                elif task_type == "bash":
+                    run_bash_script(script, args)
+                else:
+                    logger.warning(f"❓ Type inconnu : {task_type} pour {script}")
         if "cleanup" in task:
             paths = task["cleanup"].get("paths")
             if paths:
