@@ -8,7 +8,7 @@ def get_logger(name: str) -> logging.Logger:
     rotation_days = int(LOG_ROTATION_DAYS)
 
     os.makedirs(LOG_FILE_PATH, exist_ok=True)
-    log_file = os.path.join(LOG_FILE_PATH, f"{datetime.now().strftime('%Y-%m')}_{name.split('.')[0]}.log")
+    log_file = os.path.join(LOG_FILE_PATH, f"{datetime.now().strftime('%Y-%m-%d')}_{name.split('.')[0]}.log")
 
     rotate_logs(LOG_FILE_PATH, rotation_days, logf=log_file)
 

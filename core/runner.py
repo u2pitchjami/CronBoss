@@ -32,19 +32,22 @@ def run_python_script(script_path, args="", interpreter=None):
         
         cmd = [interpreter or sys.executable, full_path] + shlex.split(args)
 
-        logger.info(f"▶️ [Python] {cmd}")
+        logger.info(f"⏰ [Python] {full_path}")
         subprocess.run(cmd, env=env, cwd=cwd, check=True)
-        logger.info(f"🌞 Succès Python : {script_path}")
-
-    except subprocess.CalledProcessError as e:
-        logger.error(f"🚨 Erreur Python : {script_path} : {e}")
+        #logger.info(f"🌞 Succès Python : {script_path}")
+    except Exception as e:
+        logger.error(f"🚨 Erreur Python {e}")
+        raise
+        
 
 
 def run_bash_script(script_path, args=""):
     try:
         full_path = os.path.join(SCRIPT_DIR, script_path)
+                   
+        logger.info(f"⏰ [Bash] {full_path}")    
         cmd = ["bash", full_path] + shlex.split(args)
         subprocess.run(cmd, cwd=Path(full_path).parent, check=True)
-        logger.info(f"🌞 Succès Bash : {script_path}")
-    except subprocess.CalledProcessError as e:
+        #logger.info(f"🌞 Succès Bash : {script_path}")
+    except Exception as e:
         logger.error(f"🚨 Erreur Bash : {script_path} : {e}")
