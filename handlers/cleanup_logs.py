@@ -17,7 +17,10 @@ def cleanup_multiple(paths, rule):
     for log_path in paths:
         path = Path(log_path)
         files = path.rglob("*") if recursive else path.glob("*")
-        files = [f for f in files if f.is_file() and any(f.name.endswith(ext) for ext in extensions)]
+        if extensions == ['all']:
+            files = [f for f in files if f.is_file()]
+        else:
+            files = [f for f in files if f.is_file() and any(f.name.endswith(ext) for ext in extensions)]
 
         if keep_last:
             files = sorted(files, key=lambda f: f.stat().st_mtime, reverse=True)
