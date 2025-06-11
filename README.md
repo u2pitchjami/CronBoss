@@ -44,12 +44,6 @@ affichez le fichier .env et paramétrez le en fonction de votre setup.
 LOG_FILE_PATH=/path/to/cron_hub/logs
 LOG_ROTATION_DAYS=30
 
-#PATHS
-SCRIPT_DIR=/home/truc/
-```
-*--> il s'agit d'indiquer le répertoire le plus proches de vos répertoires de scripts, si ils sont tous dans votre home (bin et autre), indiquez comme l'exemple, au pire vous pouvez indiquer la racine du système / il faudra simplement indiquer des chemins plus longs dans vos fichiers tasks*
-
-
 ```env
 INTERPRETERS_PATH=/path/to/venvs.yaml
 ```
@@ -83,13 +77,11 @@ Le concept repose sur des listes de tâches au format yaml que vous allez dépos
   interpreter: path/to/env du script
   ```
  ** --> optionnel et uniquement pour python si l'env n'est pas géré par venvs.yaml
-  script: path/to/script/truc.py --> à adapter en fonction de la racine placé dans SCRIPT_DIR du .env*
-  
-***mais ici attention ne jamais commencer par /
-(car gérer dans la variable SCRIPT DIR)***
+  script: /absolute/path/to/script/truc.py 
 
 ```yaml
   args: "arguments" # --> optionnel, si votre script nécessite un ou plusieurs arguments
+  exclusive: true --> true/false authoriser ou non le lancement d'un script déjà en cours (si non indiqué, par défaut "true")
   hours: any ou [0, 5, etc...]
   minutes: any ou [0, 25, 45, etc...]
   days: any (chaque jour)

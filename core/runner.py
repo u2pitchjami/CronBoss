@@ -15,7 +15,8 @@ def run_python_script(script_path, args="", interpreter=None):
         if interpreter is None:
             logger.warning(f"🚨 Impossible de détecter le projet pour ce script → risque d’interpréteur incorrect")
             
-        full_path = os.path.join(SCRIPT_DIR, script_path)
+        #full_path = os.path.join(SCRIPT_DIR, script_path)
+        full_path = Path(script_path)
         cwd = Path(full_path).parent
         
         # Détection de projet (ex: brain_ops)
@@ -31,9 +32,8 @@ def run_python_script(script_path, args="", interpreter=None):
         env["PYTHONPATH"] = f"{project_root}:{env.get('PYTHONPATH', '')}"
         
         cmd = [interpreter or sys.executable, full_path] + shlex.split(args)
-
         logger.info(f"⏰ [Python] {full_path}")
-        subprocess.run(cmd, env=env, cwd=cwd, check=True)
+        subprocess.Popen(cmd, env=env, cwd=cwd)
         #logger.info(f"🌞 Succès Python : {script_path}")
     except Exception as e:
         logger.error(f"🚨 Erreur Python {e}")
@@ -47,7 +47,7 @@ def run_bash_script(script_path, args=""):
                    
         logger.info(f"⏰ [Bash] {full_path}")    
         cmd = ["bash", full_path] + shlex.split(args)
-        subprocess.run(cmd, cwd=Path(full_path).parent, check=True)
+        subprocess.Popen(cmd, cwd=Path(full_path).parent, check=True)
         #logger.info(f"🌞 Succès Bash : {script_path}")
     except Exception as e:
         logger.error(f"🚨 Erreur Bash : {script_path} : {e}")

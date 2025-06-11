@@ -3,7 +3,7 @@ import datetime
 import time
 from pathlib import Path
 from core.task_loader import load_tasks_from_directory
-from core.scheduler import should_run
+from core.scheduler import should_run, is_script_running, verifier_fichier
 from core.runner import run_python_script, run_bash_script
 from handlers.cleanup_logs import cleanup_multiple
 from handlers.get_interpreter import load_interpreters_map, get_interpreter_from_project
@@ -32,6 +32,7 @@ def main():
     for task in tasks:
         if should_run(task, hour, minute, weekday, day):
             task_type = task.get("type")
+            exclusive = task.get("exclusive", True)
             source_file = task.get("source_file")
             script = task.get("script")
             args = task.get("args", "")
@@ -40,6 +41,12 @@ def main():
                 logger.info(f"⏸️ Tâche désactivée (enabled: false) : {task.get('script')}")
                 continue
             else:
+                if exclusive and is_script_running(script):
+                    logger.info(f"🛝 Skip: {script} est déjà en cours.")
+                    continue
+                if not verifier_fichier(chemin=script):
+                    logger.error(f"🛝 Script introuvable, vérifiez le yaml")
+                    continue
                 try:
                     start_time = time.time()
                     if task_type == "python":
@@ -56,7 +63,7 @@ def main():
                     continue
                 finally:
                     if script_error:
-                        logger.error(f"🚨 Erreur lors de l'exécution de la tâche {task.get('script')}: {e} \n")
+                        logger.error(f"🚨 Erreur lors de l'exécution de la tâche {task.get('script')}: \n")
                     
                     logger.info(f"🌞 Tâche {task.get('script')} terminée avec succès en : {format_duration(duration)} \n")
                     
