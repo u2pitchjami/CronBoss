@@ -2,6 +2,7 @@
 import datetime
 import time
 from pathlib import Path
+from utils.config import TASKS_DIR
 from core.task_loader import load_tasks_from_directory
 from core.scheduler import should_run, is_script_running, verifier_fichier
 from core.runner import run_python_script, run_bash_script
@@ -26,7 +27,7 @@ def main():
 
     logger.info(f"📅 CRONHUB {now.strftime('%A %d-%m-%Y %H:%M')}")
     interpreters = load_interpreters_map()
-    tasks = load_tasks_from_directory("tasks")
+    tasks = load_tasks_from_directory(TASKS_DIR)
 
     script_error = False
     for task in tasks:

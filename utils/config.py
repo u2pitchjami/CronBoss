@@ -35,7 +35,7 @@ def get_int(key: str, default: int = 0) -> int:
 SCRIPT_DIR = get_required("SCRIPT_DIR")
 ENV_PYTHON = get_required("ENV_PYTHON")
 INTERPRETERS_PATH = get_required("INTERPRETERS_PATH")
-
+TASKS_DIR = get_str("TASKS_DIR", "./tasks")
 
 #LOGS
 LOG_FILE_PATH = get_required("LOG_FILE_PATH")
