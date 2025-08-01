@@ -3,3 +3,5 @@
 *.log
 *.yaml
 */__pycache__
+utils/gabarits/
+/tests/

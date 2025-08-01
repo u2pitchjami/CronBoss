@@ -2,6 +2,7 @@
   script: path to project/script_python.py
   hours: any
   days: any
+  interpreter: 
   enabled: true
   cleanup:
     paths:

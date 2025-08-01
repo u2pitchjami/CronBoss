@@ -4,7 +4,7 @@ from typing import Optional
 from utils.config import PROJECT_ROOT_FOLDERS, INTERPRETERS_PATH
 from utils.logger import get_logger
 
-logger = get_logger("Cron_Hub")
+logger = get_logger("CronHub")
 
 def load_interpreters_map(path=INTERPRETERS_PATH):
     try:

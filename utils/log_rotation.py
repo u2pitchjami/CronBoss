@@ -12,7 +12,11 @@ def rotate_logs(log_dir, keep_days=30, logf=None):
     def log(message):
         print(message)
         if logf:
-            logf.write(f"{message}\n")
+            if isinstance(logf, str):
+                with open(logf, "a", encoding="utf-8") as f:
+                    f.write(f"{message}\n")
+            else:
+                logf.write(f"{message}\n")
 
     if not os.path.isdir(log_dir):
         log(f"[LOG ROTATION] Dossier de logs introuvable : {log_dir}")
