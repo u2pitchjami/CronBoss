@@ -1,6 +1,7 @@
 
 import time
 import subprocess
+import threading
 from pathlib import Path
 from utils.logger import get_logger
 from utils.config import WARNINGS_AS_FAILURE, DEFAULT_VENV, INTERPRETERS_PATH
@@ -39,6 +40,9 @@ class Task:
             )
         else:
             self.interpreter = None
+        
+        #cwd
+        self.cwd = self._resolve_cwd()
 
         # Retry & timeout
         self.retries = int(config.get("retries", 0))
@@ -54,6 +58,30 @@ class Task:
         self.stdout = None
         self.stderr = None
 
+    def _resolve_cwd(self) -> str:
+        """
+        Détermine le répertoire de travail correct.
+        - Si Bash : dossier du script
+        - Si Python : cherche un .env en remontant jusqu'à 3 niveaux
+        """
+        script_dir = self.script.parent.resolve()
+
+        if self.type == "bash":
+            return str(script_dir)
+
+        if self.type == "python":
+            current = script_dir
+            for _ in range(3):  # on check max 3 niveaux
+                env_file = current / ".env"
+                if env_file.exists():
+                    return str(current)
+                current = current.parent
+            # fallback : dossier du script
+            return str(script_dir)
+
+        # fallback pour types inconnus
+        return str(Path.cwd())
+
     def should_run(self, hour, minute, weekday, day):
         """Vérifie si la tâche doit être lancée (via scheduler)."""
         return should_run(self.config, hour, minute, weekday, day)
@@ -68,19 +96,43 @@ class Task:
             return False
         return True
 
+    @staticmethod
+    def _stream_reader(pipe, buffer, name, logger):
+        """Lit un flux en temps réel et stocke les lignes."""
+        for line in iter(pipe.readline, ''):  # '' car déjà str
+            decoded = line.strip()
+            buffer.append(decoded)
+            logger.debug(f"[{name}] {decoded}")
+        pipe.close()
+
     def start(self, handle):        
         """Démarre la tâche sans bloquer."""
         self.proc = handle["proc"]
         self.start_time = time.time()
         self.attempts += 1  # 🔑 incrément à chaque lancement
         self.returncode = None
-        self.stdout = None
-        self.stderr = None
+        self.stdout_lines = []
+        self.stderr_lines = []
+
+        # Threads pour vider stdout et stderr en continu
+        threading.Thread(
+            target=self._stream_reader,
+            args=(self.proc.stdout, self.stdout_lines, "stdout", logger),
+            daemon=True
+        ).start()
+        threading.Thread(
+            target=self._stream_reader,
+            args=(self.proc.stderr, self.stderr_lines, "stderr", logger),
+            daemon=True
+        ).start()
+        
         if self.attempts > 1:
             logger.info(f"[CronHub] 🔄 Retry {self.attempts}/{self.retries} pour {self.script}")
         else:
             logger.info(f"[CronHub] ▶️ Lancement {self.script}")
-
+            
+    
+    
     def finish(self, timeout=None):
         """Récupère les infos quand la tâche est terminée."""
         try:
@@ -100,6 +152,14 @@ class Task:
             return
         self.duration = time.time() - self.start_time
         self.returncode = self.proc.returncode
+        # 🔑 Concatène les lignes récupérées
+        self.stdout = "\n".join(self.stdout_lines[-20:])
+        self.stderr = "\n".join(self.stderr_lines[-20:])
+
+        if self.returncode != 0:
+            logger.error(f"[CronHub] ❌ Erreur sur {self.script}: {self.stderr}")
+        else:
+            logger.info(f"[CronHub] ✅ Succès {self.script}")
 
     def check_status(self):
         """Vérifie l'état sans bloquer, gère timeout et retry."""

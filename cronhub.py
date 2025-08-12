@@ -39,9 +39,9 @@ def main():
         if task.enabled and task.should_run(hour, minute, weekday, day) and task.can_start():
             try:
                 if task.type == "python":
-                    handle = run_python_script(str(task.script), task.args, task.interpreter)
+                    handle = run_python_script(str(task.script), task.cwd, task.args, task.interpreter)
                 elif task.type == "bash":
-                    handle = run_bash_script(str(task.script), task.args)
+                    handle = run_bash_script(str(task.script), task.cwd, task.args)
                 else:
                     logger.warning(f"❓ Type inconnu : {task.type} pour {task.script}")
                     continue
@@ -62,7 +62,9 @@ def main():
     # Suivi des tâches en cours
     while running_tasks:
         still_running = []
+        logger.debug(f"🚨 test : running_tasks {running_tasks}s")
         for task in running_tasks:
+            logger.debug(f"🚨 test : {task.script} timeout {task.timeout}s")
             if task.proc.poll() is None:
                 # Timeout async
                 if task.timeout > 0 and (time.time() - task.start_time) > task.timeout:
@@ -73,6 +75,7 @@ def main():
                     notifier_manager.notify(task, "failure", stderr=task.stderr)
                 else:
                     still_running.append(task)
+                    logger.debug(f"🚨 test2 : {task.script} timeout {task.timeout}s")
             else:
                 # Terminé
                 task.finish()

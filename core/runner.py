@@ -9,11 +9,11 @@ from utils.config import SCRIPT_DIR
 
 logger = get_logger("CronHub")
 
-def run_python_script(script_path, args="", interpreter=None):
+def run_python_script(script_path, cwd, args="", interpreter=None):
     """Lance un script Python et retourne un handle de suivi."""
     try:
         full_path = Path(script_path)
-        cwd = Path(full_path).parent
+        #cwd = Path(full_path).parent
 
         # Détection projet → sert à ajuster PYTHONPATH
         project_root = None
@@ -44,7 +44,7 @@ def run_python_script(script_path, args="", interpreter=None):
         raise
 
 
-def run_bash_script(script_path, args=""):
+def run_bash_script(script_path, cwd, args=""):
     """Lance un script Bash et retourne un handle de suivi."""
     try:
         full_path = Path(script_path)
@@ -53,7 +53,7 @@ def run_bash_script(script_path, args=""):
         cmd = ["bash", str(full_path)] + shlex.split(args)
         proc = subprocess.Popen(
             cmd,
-            cwd=full_path.parent,
+            cwd=cwd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
