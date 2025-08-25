@@ -1,4 +1,4 @@
-# 📘 TUTORIEL : Utilisation de CronHub (Python + YAML)
+# 📘 TUTORIEL : Utilisation de cronboss (Python + YAML)
 
 ## 🎯 Objectif
 
@@ -6,7 +6,7 @@ Automatiser facilement des scripts Python ou Bash à des horaires précis avec g
 
 ---
 
-## 🧱 Structure d’un fichier `cronhub.yaml`
+## 🧱 Structure d’un fichier `cronboss.yaml`
 
 Chaque tâche est une entrée dans une liste YAML :
 
@@ -68,7 +68,7 @@ cleanup:
 
 ## 🐍 Détection d’environnement Python
 
-Si aucun `interpreter` n’est précisé dans la tâche, CronHub :
+Si aucun `interpreter` n’est précisé dans la tâche, cronboss :
 
 1. Cherche le nom du projet via le chemin du script
 2. Le compare avec une **carte des interpréteurs** (`venvs.yaml`)
@@ -101,12 +101,12 @@ CRON_INTERVAL_MINUTES=10
 
 ### 🔎 Fonctionnement :
 
-* Si `cronhub.py` est appelé toutes les **15 minutes** via `crontab`, il vérifie **quelles tâches auraient dû s’exécuter dans les 10 dernières minutes**.
+* Si `cronboss.py` est appelé toutes les **15 minutes** via `crontab`, il vérifie **quelles tâches auraient dû s’exécuter dans les 10 dernières minutes**.
 * Cela évite de **rater des exécutions** à cause d’un décalage de minute.
 
 ### ⚠️ Important :
 
-Si cette variable n’est **pas** définie, CronHub considère un intervalle de 0 minute → toutes les tâches doivent alors matcher **exactement l’heure ET la minute**, ce qui est très contraignant.
+Si cette variable n’est **pas** définie, cronboss considère un intervalle de 0 minute → toutes les tâches doivent alors matcher **exactement l’heure ET la minute**, ce qui est très contraignant.
 
 ### ✅ Recommandation :
 
@@ -134,7 +134,7 @@ Toujours définir `CRON_INTERVAL_MINUTES` dans `.env`, idéalement entre `5` et 
 
 ---
 
-## 🧠 Exemple complet de tâche CronHub
+## 🧠 Exemple complet de tâche cronboss
 
 ```yaml
 - type: python

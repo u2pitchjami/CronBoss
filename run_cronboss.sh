@@ -8,4 +8,4 @@ if [ ! -d "$VENV_DIR" ]; then
 fi
 
 source "$VENV_DIR/bin/activate"
-python cron_hub.py
+python cronboss.py

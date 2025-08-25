@@ -1,4 +1,4 @@
-![Projet Logo](cron_hub.svg)
+![Projet Logo](cronboss.svg)
 
 ## 🎯 Objectif principal
 
@@ -20,7 +20,7 @@ C'est un projet python, donc qui nécessite l'utilisation d'en environnement vir
 
 - commencez par rendre le script install_env.sh exécutable
 	- ``` sudo chmod +x install_env.sh```
-	- ``` sudo chmod +x run_cron_hub.sh```
+	- ``` sudo chmod +x run_cronboss.sh```
 - puis
 	- ``` install_env.sh```
 
@@ -32,8 +32,8 @@ votre seule intervention dans crontab.
 - ouverture de crontab
 	- ``` crontab -e```
 - paramétrage du cronhub
-	- ``` */15 * * * * /path/to/cron_hub/run_cron_hub.sh```
-	- ici le script sera exécuté toutes les 15 minutes, adaptez le en fonction de vos besoins. Mais plus le délai est court et plus cela offre de la souplesse pour cron_hub
+	- ``` */15 * * * * /path/to/cronboss/run_cronboss.sh```
+	- ici le script sera exécuté toutes les 15 minutes, adaptez le en fonction de vos besoins. Mais plus le délai est court et plus cela offre de la souplesse pour cronboss
 
 
 ### **Paramétrage du fichier .env :**
@@ -41,7 +41,7 @@ affichez le fichier .env et paramétrez le en fonction de votre setup.
 
 ```env
 #LOGS
-LOG_FILE_PATH=/path/to/cron_hub/logs
+LOG_FILE_PATH=/path/to/cronboss/logs
 LOG_ROTATION_DAYS=30
 
 ```env
@@ -54,7 +54,7 @@ INTERPRETERS_PATH=/path/to/venvs.yaml
 CRON_INTERVAL_MINUTES=15
 ```
 *--> indiquez l'intervale choisi dans le crontab -e
-cela sert à gérer les écarts entre l'éxécution du cron_hub et le paramétrage de vos tasks.
+cela sert à gérer les écarts entre l'éxécution du cronboss et le paramétrage de vos tasks.
 Exemple : ici crontab -e à 15 minutes (donc aux minutes 0, 15, 30, 45)
 Si dans vos tâches vous placez un script à la minute 20, sans le CRON_INTERVAL_MINUTES il ne sera jamais exécuté, mais là, il va checker l'intervale entre les 2 exécution et lancer à 30 le script programmé à 20.
 Si vous laisser CRON_INTERVAL_MINUTES=0 cela désactive l'action de rattrapage et le script programmé à 20 ne sera pas exécuté.*
@@ -125,7 +125,7 @@ project2: /path/to/.venv-mixo/bin/python3
 project1 et project2 (ou autre nom) doivent être présents dans ce fichier mais également comme nom de fichier yaml du dossier "tasks"
 donc ici project1.yaml par exemple.
 
-Si aucun interpreter des scripts python n'est indiqué dans les tâches de project1.yaml, Cron_hub va checker dans venvs.yaml si un env global au projet est indiqué.
+Si aucun interpreter des scripts python n'est indiqué dans les tâches de project1.yaml, cronboss va checker dans venvs.yaml si un env global au projet est indiqué.
 
 
 ## Authors
