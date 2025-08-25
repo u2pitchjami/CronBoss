@@ -1,4 +1,4 @@
-![Projet Logo](cronboss.svg)
+![Projet Logo](CronBoss.svg)
 
 ## 🎯 Objectif principal
 
