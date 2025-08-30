@@ -3,7 +3,7 @@ import requests
 from utils.config import DISCORD_WEBHOOK_URL
 from utils.logger import get_logger
 
-logger = get_logger("discord_notifier")
+logger = get_logger("CronBoss")
 
 class DiscordNotifier:
     def send(self, task, status, **kwargs):

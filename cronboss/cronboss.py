@@ -13,7 +13,7 @@ from notifiers.manager import NotifierManager
 from core.task import Task
 import time
 
-logger = get_logger("CronHub")
+logger = get_logger("CronBoss")
 notifier_manager = NotifierManager()
 
 def format_duration(seconds):
