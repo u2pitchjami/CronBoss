@@ -1,8 +1,10 @@
-import os
-import logging
 from datetime import datetime
-from utils.log_rotation import rotate_logs
+import logging
+import os
+
 from utils.config import LOG_FILE_PATH, LOG_ROTATION_DAYS
+from utils.log_rotation import rotate_logs
+
 
 def get_logger(name: str) -> logging.Logger:
     rotation_days = int(LOG_ROTATION_DAYS)
@@ -17,7 +19,7 @@ def get_logger(name: str) -> logging.Logger:
     if not logger.handlers:
         logger.setLevel(logging.INFO)
 
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(name)s - PID:%(process)d] %(message)s')
+        formatter = logging.Formatter("%(asctime)s - %(levelname)s - [%(name)s - PID:%(process)d] %(message)s")
 
         # Console
         stream_handler = logging.StreamHandler()
@@ -25,9 +27,8 @@ def get_logger(name: str) -> logging.Logger:
         logger.addHandler(stream_handler)
 
         # Fichier
-        file_handler = logging.FileHandler(log_file, encoding='utf-8')
+        file_handler = logging.FileHandler(log_file, encoding="utf-8")
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 
     return logger
-    

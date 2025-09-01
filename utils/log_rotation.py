@@ -1,15 +1,17 @@
 import os
 import time
 
-def rotate_logs(log_dir, keep_days=30, logf=None):
+
+def rotate_logs(log_dir: str, keep_days: int = 30, logf: str | None = None) -> None:
     """
     Supprime les fichiers de log dans log_dir plus vieux que keep_days.
+
     Écrit les actions dans un fichier de log si logf est fourni.
     """
     now = time.time()
     cutoff = now - (keep_days * 86400)
 
-    def log(message):
+    def log(message: str) -> None:
         print(message)
         if logf:
             if isinstance(logf, str):

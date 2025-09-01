@@ -1,3 +1,5 @@
 python-dotenv==1.1.0
 PyYAML==6.0.2
 requests==2.32.4
+psutil==5.9.5
+types_requests==2.32.4
