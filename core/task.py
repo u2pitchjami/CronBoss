@@ -21,7 +21,7 @@ from utils.types import (
     TaskConfig,
 )
 
-logger: logging.Logger = get_logger("CronHub")
+logger: logging.Logger = get_logger("CronBoss")
 
 
 class Task:

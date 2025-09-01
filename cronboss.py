@@ -43,7 +43,7 @@ def main() -> None:
     weekday = now.weekday()
     day = now.day
 
-    logger.info("📅 CRONHUB %s", now.strftime("%A %d-%m-%Y %H:%M"))
+    logger.info("📅 CRONBOSS %s", now.strftime("%A %d-%m-%Y %H:%M"))
 
     # Chargement & préparation
     raw_tasks: list[TaskWithSource] = load_tasks_from_directory(TASKS_DIR)
@@ -179,7 +179,7 @@ def main() -> None:
         }
         notifier_manager.notify_summary(summary_payload)
 
-    logger.info("🏁 CRONHUB : TERMINE ✅\n")
+    logger.info("🏁 CRONBOSS : TERMINE ✅\n")
 
 
 if __name__ == "__main__":

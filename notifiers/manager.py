@@ -8,7 +8,7 @@ from utils.config import DEFAULT_NOTIFY_ON, SEND_SUMMARY_DISCORD
 from utils.logger import get_logger
 from utils.types import NotificationsCfg, Notifier, Status, SummaryPayload, TaskLike
 
-logger = get_logger("CronHub")
+logger = get_logger("CronBoss")
 
 
 class NotifierManager:
@@ -60,7 +60,7 @@ class NotifierManager:
             return
 
         content = (
-            "📊 **Résumé CronHub**\n"
+            "📊 **Résumé CronBoss**\n"
             f"✅ {summary['success']} succès\n"
             f"⚠️ {summary['success_with_warnings']} avec warnings\n"
             f"❌ {summary['failure']} échecs\n"

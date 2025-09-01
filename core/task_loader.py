@@ -9,7 +9,7 @@ from utils.logger import get_logger
 from utils.normalizer import normalize_task_dict
 from utils.types import TaskWithSource
 
-logger = get_logger("Cron_Hub")
+logger = get_logger("CronBoss")
 
 
 def load_tasks_from_directory(task_dir: str | Path) -> list[TaskWithSource]:

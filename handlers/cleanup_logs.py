@@ -7,7 +7,7 @@ import time
 from utils.logger import get_logger
 from utils.types import CleanupRule
 
-logger = get_logger("Cron_Hub")
+logger = get_logger("CronBoss")
 
 
 def cleanup_multiple(paths: Sequence[str | Path], rule: CleanupRule) -> None:

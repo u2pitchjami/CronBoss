@@ -8,7 +8,7 @@ from utils.config import CRON_INTERVAL_MINUTES
 from utils.logger import get_logger
 from utils.types import DaysField, HoursField, MinutesField, TaskConfig  # TypedDict & unions
 
-logger = get_logger("Cron_Hub")
+logger = get_logger("CronBoss")
 
 
 def should_run(task: TaskConfig, hour: int, minute: int, weekday: int, day: int) -> bool:

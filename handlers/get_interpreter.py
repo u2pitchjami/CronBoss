@@ -10,7 +10,7 @@ from utils.config import INTERPRETERS_PATH, PROJECT_ROOT_FOLDERS
 from utils.logger import get_logger
 from utils.types import InterpretersMap
 
-logger = get_logger("CronHub")
+logger = get_logger("CronBoss")
 
 
 def load_interpreters_map(path: str | Path = INTERPRETERS_PATH) -> InterpretersMap:

@@ -11,7 +11,7 @@ import sys
 from utils.logger import get_logger
 from utils.types import RunHandle
 
-logger = get_logger("CronHub")
+logger = get_logger("CronBoss")
 
 
 def _detect_project_root(script_path: Path) -> Path:
