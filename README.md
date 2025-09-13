@@ -81,7 +81,9 @@ SEND_SUMMARY_DISCORD=false
 3. Créer un **nouveau webhook**, lui donner un nom et choisir un salon cible  
 4. Copier l’URL fournie et la coller dans `DISCORD_WEBHOOK_URL` de votre `.env`  
 
----
+> 🔗 Pour aller plus loin : [Guide Discord – créer un webhook officiel](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks)  
+> *(Serveur → Paramètres du serveur → Intégrations → Créer un webhook → copier l’URL → coller dans `.env`)*
+
 
 ## 📝 Exemple de tâche YAML
 
