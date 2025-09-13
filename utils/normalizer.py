@@ -14,7 +14,7 @@ from utils.types import (
     WeekdaySpec,
 )
 
-LOGGER = get_logger(__name__)
+LOGGER = get_logger("Croboss")
 
 
 def _as_bool(value: Any, default: bool) -> bool:

@@ -14,18 +14,6 @@ from utils.types import RunHandle
 logger = get_logger("CronBoss")
 
 
-def _detect_project_root(script_path: Path) -> Path:
-    """
-    Heuristique simple pour trouver la racine projet :
-    - si un parent s'appelle 'brain_ops' -> on s'y cale
-    - sinon, on remonte d'un cran au-dessus du dossier du script
-    """
-    for parent in script_path.parents:
-        if parent.name == "brainops":
-            return parent
-    return script_path.parent.parent
-
-
 def run_python_script(
     script_path: str | Path,
     cwd: str | Path,
@@ -45,16 +33,13 @@ def run_python_script(
         full_path = Path(script_path).resolve()
         workdir = Path(cwd).resolve()
 
-        project_root = _detect_project_root(full_path)
-
         # Construire l'env proprement
         env: Mapping[str, str] = os.environ.copy()
         current_pp = env.get("PYTHONPATH", "")
         env = {
             **env,
-            "PYTHONPATH": f"{project_root}{os.pathsep}{current_pp}" if current_pp else str(project_root),
+            "PYTHONPATH": f"{workdir}{os.pathsep}{current_pp}" if current_pp else str(workdir),
         }
-
         cmd: list[str] = [interpreter or sys.executable, str(full_path), *shlex.split(args)]
         logger.info("⏰ [Python] %s cmd=%s cwd=%s", full_path, cmd, workdir)
 

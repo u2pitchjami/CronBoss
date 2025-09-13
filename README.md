@@ -1,146 +1,186 @@
 ![Projet Logo](CronBoss.svg)
 
+# 🕒 CronBoss
+
 ## 🎯 Objectif principal
-
-Le but de ce projet est de faciliter et de personnaliser les tâches cron.
-Il permet de gérer des scripts bash et python avec gestion de l'environnement virtuel.
-De plus il gère la suppression auto de logs ou autres fichiers générés par mes scripts.
-
-## 🔹 Contexte & Motivation
-
-Le paramétrage du cron est souvent fastidieux avec un gros problème de souplesse, notamment pour les scripts python.
-Ici le dossier d'execution, l'environnement python sont gérés automatiquement.
+CronBoss est un outil d’automatisation et de planification de tâches, pensé pour **simplifier et enrichir le cron classique**.  
+Il permet de lancer des scripts **Python** ou **Bash**, de gérer automatiquement les environnements virtuels, les logs, les nettoyages, et d’envoyer des **notifications en temps réel** (ex. Discord).
 
 ---
 
-## 🧰 Installation :
+## 🔹 Contexte & Motivation
+Le cron natif est rigide et peu adapté à la diversité des workflows modernes (scripts Python multi-envs, logs, monitoring, etc.).  
+CronBoss apporte une **couche de flexibilité et de contrôle** :  
 
-### Création de l'environnement virtuel :
-C'est un projet python, donc qui nécessite l'utilisation d'en environnement virtuel.
+- Déploiement rapide (une ligne dans crontab)  
+- Planification intuitive via YAML  
+- Gestion des environnements Python multi-projets  
+- Notifications et reporting intégrés  
+- Exclusivité des tâches (éviter les doublons en cours)  
 
-- commencez par rendre le script install_env.sh exécutable
-	- ``` sudo chmod +x install_env.sh```
-	- ``` sudo chmod +x run_cronboss.sh```
-- puis
-	- ``` install_env.sh```
+---
 
-cela va automatiquement créer l'environnement virtuel python avec les dépendances nécessaires.
+## 🧰 Stack technique
+- **Python 3.11+**  
+- **Bash** (scripts install/run)  
+- **Crontab** (intégration native Linux/Unix)  
+- **YAML** (planification des tâches)  
+- **dotenv** (.env pour configuration)  
+- **VM Ubuntu (Unraid)** : exécution centralisée  
+- **Discord Webhooks** (notifications)  
 
-### Insertion dans crontab -e :
-votre seule intervention dans crontab.
+---
 
-- ouverture de crontab
-	- ``` crontab -e```
-- paramétrage du cronhub
-	- ``` */15 * * * * /path/to/cronboss/run_cronboss.sh```
-	- ici le script sera exécuté toutes les 15 minutes, adaptez le en fonction de vos besoins. Mais plus le délai est court et plus cela offre de la souplesse pour cronboss
+## ⚙️ Installation
 
+### 1. Création de l'environnement virtuel
+```bash
+sudo chmod +x install_env.sh
+sudo chmod +x run_cronboss.sh
+./install_env.sh
+```
 
-### **Paramétrage du fichier .env :**
-affichez le fichier .env et paramétrez le en fonction de votre setup.
+### 2. Intégration dans `crontab -e`
+```bash
+*/15 * * * * /path/to/cronboss/run_cronboss.sh
+```
+➡ Ici toutes les 15 minutes, ajustez selon vos besoins.  
 
+### 3. Paramétrage `.env`
 ```env
-#LOGS
+# Logs
 LOG_FILE_PATH=/path/to/cronboss/logs
 LOG_ROTATION_DAYS=30
 
-```env
+# Interpreters
 INTERPRETERS_PATH=/path/to/venvs.yaml
-```
-*--> fichier nécessaire pour les scripts python*
 
-```env
-#INTERVAL
+# Intervales
 CRON_INTERVAL_MINUTES=15
-```
-*--> indiquez l'intervale choisi dans le crontab -e
-cela sert à gérer les écarts entre l'éxécution du cronboss et le paramétrage de vos tasks.
-Exemple : ici crontab -e à 15 minutes (donc aux minutes 0, 15, 30, 45)
-Si dans vos tâches vous placez un script à la minute 20, sans le CRON_INTERVAL_MINUTES il ne sera jamais exécuté, mais là, il va checker l'intervale entre les 2 exécution et lancer à 30 le script programmé à 20.
-Si vous laisser CRON_INTERVAL_MINUTES=0 cela désactive l'action de rattrapage et le script programmé à 20 ne sera pas exécuté.*
 
-```env
-#ENV
+# Environnement Python par défaut
 ENV_PYTHON=/path/to/.venv
+
+# Discord Notifications
+# This is the Discord webhook URL for sending notifications.
+DISCORD_WEBHOOK_URL=https://discordapp.com/api/webhooks/xxxxx
+
+# Notifications par défaut si non définies dans YAML
+DEFAULT_NOTIFY_ON=none
+
+# Traiter les warnings comme des échecs
+WARNINGS_AS_FAILURE=false
+
+# Envoyer un résumé global par exécution de CronBoss
+SEND_SUMMARY_DISCORD=false
 ```
-*--> env python par défaut si aucune n'est mentionné, par défaut indiquer l'env créé grâce au script plus haut mais n'est utile que pour les scripts python, pas pour bash.*
 
-## **⚙️Paramétrage des tâches :**
-Le concept repose sur des listes de tâches au format yaml que vous allez déposer dans le dossier "tasks" du projet.
+### 🔑 Comment obtenir un Webhook Discord ?
+1. Ouvrir votre **serveur Discord**  
+2. Aller dans **Paramètres du serveur > Intégrations > Webhooks**  
+3. Créer un **nouveau webhook**, lui donner un nom et choisir un salon cible  
+4. Copier l’URL fournie et la coller dans `DISCORD_WEBHOOK_URL` de votre `.env`  
 
-```yaml 
+---
+
+## 📝 Exemple de tâche YAML
+
+### Script Python
+```yaml
 - type: python
+  script: /home/user/dev/project/scripts/analysis.py
+  args: --count 150
+  hours: [0, 12]          # exécution à minuit et midi
+  minutes: [0]
+  days: any               # tous les jours
+  exclusive: true         # pas deux instances en parallèle
+  enabled: true
+  retries: 1
+  retry_delay: 30         # en secondes
+  timeout: 600            # en secondes
+  notifications:
+    notify_on: ["failure"]
+    channels: ["discord"]
 ```
-*--> python ou bash*
 
-  ```yaml
-  interpreter: path/to/env du script
-  ```
- ** --> optionnel et uniquement pour python si l'env n'est pas géré par venvs.yaml
-  script: /absolute/path/to/script/truc.py 
-
+### Script Bash
 ```yaml
-  args: "arguments" # --> optionnel, si votre script nécessite un ou plusieurs arguments
-  exclusive: true --> true/false authoriser ou non le lancement d'un script déjà en cours (si non indiqué, par défaut "true")
-  hours: any ou [0, 5, etc...]
-  minutes: any ou [0, 25, 45, etc...]
-  days: any (chaque jour)
-```
-*ou -->*
-```yaml
-  days :
-    day: [1, 15] # --> exécution le 1er et le 15 du mois
-    weekday: [0, 5] # --> exécution le lundi et le samedi de chaque semaine (cumulable avec day: [1, 15])
+- type: bash
+  script: /home/user/dev/project/scripts/do_backup.sh
+  hours: any
+  days:
+    weekday: [0, 5]       # lundi et vendredi
+  enabled: true
+  exclusive: true
 ```
 
-```yaml
-  enabled: true # ou false (si false la tâche ne sera pas exécutée)
-  cleanup:
-    paths:
-      - /path/to/file
-    rule:
-      keep_days: 14
-      extensions: [".log"] #ou autre en fonction du besoin
-      recursive: true #(peut être utile si vos logs des différents scripts de votre projet dans à la même racine, du coup il va gérer tous les sous dossiers et donc pas besoin de la paramétrer sur les autres)
+---
 
+## 📂 Champs YAML supportés
+
+| Champ           | Exemple                        | Description |
+|-----------------|--------------------------------|-------------|
+| `type`          | `python` / `bash`             | Type de script |
+| `script`        | `/chemin/vers/script.py`      | Script à exécuter |
+| `args`          | `--opt value`                 | Arguments optionnels |
+| `hours`         | `[0, 12]` / `any`             | Heures d’exécution |
+| `minutes`       | `[0, 30]` / `any`             | Minutes |
+| `days`          | `[1, 15]` ou `{weekday: [0,5]}` / `any` | Planification |
+| `enabled`       | `true` / `false`              | Active/désactive la tâche |
+| `exclusive`     | `true` / `false`              | Empêche 2 exécutions simultanées |
+| `retries`       | `1`                           | Nb de tentatives en cas d’échec |
+| `retry_delay`   | `30`                          | Délai entre retries (sec) |
+| `timeout`       | `600`                         | Timeout max (sec) |
+| `cleanup`       | `paths: [...]` + `rule:`      | Nettoyage fichiers/logs |
+| `notifications` | `notify_on: [...]` + `channels: [...]` | Notifications |
+
+---
+
+## 🔔 Notifications
+- **Discord** (déjà supporté) : configurable par tâche ou globalement via `.env`  
+- `DEFAULT_NOTIFY_ON=none` → aucune notif par défaut  
+- `WARNINGS_AS_FAILURE=true` → interprète les warnings comme des échecs  
+- `SEND_SUMMARY_DISCORD=true` → envoie un résumé des exécutions dans une seule notif  
+
+Exemple résumé auto :
+```
+📊 RÉSUMÉ : ✅ 3 succès | ❌ 2 échecs | ⏱️ Durée totale : 120.53s
 ```
 
-Je vous recommande un fichier par projet mais ça n'est pas obligatoire.
+**À venir** : mails, Slack, etc.  
 
-### Spécificité Python :
-Les scripts python nécessite une environnement pour fonctionner correctement.
+---
 
-Le script utilisera dans l'ordre :
- - la donnée "interpreter:" du fichier yaml par la tâche en question
- - la donnée du fichier venvs.yaml qui concerne tous les scripts python d'un projet
- - l'env par défaut (probablement celui qui vous aurez créé), mais sans l'assurance que les dépendances nécessaires soient présentes.
+## 🛡️ Exclusivité
+- `exclusive: true` → active un **lock fichier** par tâche, évitant les doublons  
+- `exclusive: false` → script relançable en parallèle  
 
-### Comment remplir le fichier venvs.yaml ?
+---
 
-```
-project1: /path/to/.venv/bin/python3
-project2: /path/to/.venv-mixo/bin/python3
-```
+## 📊 Logs & Stats
+- Logs lisibles (`logs.log` par défaut) avec ✅ succès / ❌ échec / 🔄 retry / ⏱ timeout  
+- Génération optionnelle de **stats JSON** (durées, status…) pour futur dashboard  
 
-project1 et project2 (ou autre nom) doivent être présents dans ce fichier mais également comme nom de fichier yaml du dossier "tasks"
-donc ici project1.yaml par exemple.
+---
 
-Si aucun interpreter des scripts python n'est indiqué dans les tâches de project1.yaml, cronboss va checker dans venvs.yaml si un env global au projet est indiqué.
+## 📦 Roadmap
+- 📧 Notifications par mail et autres canaux  
+- 🗄️ Réflexion sur l’orga YAML vs base de données (voire hybride)  
+- 🌐 Web UI possible pour gestion centralisée des tâches & stats  
+- 🔄 Déploiement futur en **service** (systemd) en plus du crontab  
 
+---
 
-## Authors
+## 👤 Auteur
+👤 **u2pitchjami**  
 
-👤 **u2pitchjami**
+[![Bluesky](https://img.shields.io/badge/Bluesky-Follow-blue?logo=bluesky)](https://bsky.app/profile/u2pitchjami.bsky.social)  
+[![Twitter](https://img.shields.io/twitter/follow/u2pitchjami.svg?style=social)](https://twitter.com/u2pitchjami)  
+![GitHub followers](https://img.shields.io/github/followers/u2pitchjami)  
+![Reddit User Karma](https://img.shields.io/reddit/user-karma/combined/u2pitchjami)  
 
-[![Bluesky](https://img.shields.io/badge/Bluesky-Follow-blue?logo=bluesky)](https://bsky.app/profile/u2pitchjami.bsky.social)
-[![Twitter](https://img.shields.io/twitter/follow/u2pitchjami.svg?style=social)](https://twitter.com/u2pitchjami)
-![GitHub followers](https://img.shields.io/github/followers/u2pitchjami)
-![Reddit User Karma](https://img.shields.io/reddit/user-karma/combined/u2pitchjami)
+- Twitter: [@u2pitchjami](https://twitter.com/u2pitchjami)  
+- Github: [@u2pitchjami](https://github.com/u2pitchjami)  
+- LinkedIn: [Thierry Beugnet](https://linkedin.com/in/thierry-beugnet-a7761672)  
 
-* Twitter: [@u2pitchjami](https://twitter.com/u2pitchjami)
-* Github: [@u2pitchjami](https://github.com/u2pitchjami)
-* LinkedIn: [@LinkedIn](https://linkedin.com/in/thierry-beugnet-a7761672)
-
-## 🔗 Liens utiles
-- 📜 [Documentation](../Resources/Documentation.md)
-- 📂 [Dépôt GitHub](https://github.com/user/projet)`
+---
