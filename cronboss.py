@@ -56,6 +56,7 @@ def main() -> None:
         if task.enabled and task.should_run(hour, minute, weekday, day) and task.can_start():
             try:
                 if task.type == "python":
+                    logger.info("🐍 Lancement de %s avec l'interpréteur %s", task.script, task.interpreter)
                     handle = run_python_script(str(task.script), task.cwd, task.args, task.interpreter)
                 elif task.type == "bash":
                     handle = run_bash_script(str(task.script), task.cwd, task.args)

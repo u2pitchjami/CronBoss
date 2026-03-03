@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cronboss"
-version = "0.1.0"
+version = "1.5.1"
 description = "cronboss"
 requires-python = ">=3.11"  # cohérent avec mypy/ruff
 
@@ -17,7 +17,7 @@ exclude = ["tests*", "z_old*", "docker*"]
 
 # --- Pylint (si tu le gardes ponctuellement, pas en pre-commit) -------------
 [tool.pylint.MASTER]
-ignore = ["z_old", "docker"]
+ignore = ["tests*", "z_old", "docker"]
 
 # --- Mypy -------------------------------------------------------------------
 [tool.mypy]

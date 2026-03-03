@@ -35,6 +35,8 @@ def run_python_script(
 
         # Construire l'env proprement
         env: Mapping[str, str] = os.environ.copy()
+        # logger.debug(f"env: {env}")
+        logger.debug("⏰ [Python] %s cmd=%s cwd=%s", full_path, args, workdir)
         current_pp = env.get("PYTHONPATH", "")
         env = {
             **env,

@@ -52,3 +52,4 @@ extract_2_centraldb/
 */__pycache__
 utils/gabarits/
 /tests/
+.venv/
